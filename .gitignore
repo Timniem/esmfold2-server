@@ -3,3 +3,6 @@
 
 # Intellij
 .idea
+
+# Python cache
+__pycache__
