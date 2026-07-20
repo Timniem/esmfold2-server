@@ -1,5 +1,5 @@
 # esmfold-server
-A minimal HTTP service for folding amino acid sequences with ESMFold and returning a PDB file.
+A minimal HTTP service for folding amino acid sequences with ESMFold2 and returning a PDB file.
 
 ## Features
 - Loads the ESMFold model once at startup
@@ -46,14 +46,6 @@ Example response:
 }
 ```
 
-## Fold a sequence
-```
-curl -X POST http://127.0.0.1:8000/fold \
-  -H "Content-Type: application/json" \
-  -d '{"sequence":"MKTVRQERLKSIVRILERSKEPVSGAQLAEELSVSRQVIVQDIAYLRSLGYNIVATPRGYVLAGG"}' \
-  -o prediction.pdb
-```
-
 Rules:
 - Sequence is required
 - Only the 20 standard amino acids are accepted
@@ -72,3 +64,30 @@ Returns the predicted structure as a PDB file with content type `chemical/x-pdb`
 - FP16 is only enabled on CUDA
 - On Apple Silicon, the service uses mps if available
 - Requests are serialized with a lock so one fold runs at a time per service instance
+
+## Example requests
+
+#### Single protein (simple)
+```
+curl -X POST http://localhost:8000/fold \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sequences": [{"id": "A", "sequence": "MAKTPSDHLLSTLEELVPYDFEKFKFKLQNTSVQKEHSRIPRSQIQRARPVKMATLLVTY", "input_type": "protein"}],
+    "output_format": "pdb"
+  }'
+```
+#### Protein-protein complex
+```
+curl -X POST http://localhost:8000/fold \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sequences": [
+      {"id": "A", "sequence": "MAKTPSDHLLSTLEELVPYDFEKFKFKLQNTSVQKEHSRIPRSQIQRARPVKMATLLVTY...", "input_type": "protein"},
+      {"id": "B", "sequence": "MDDREDLVYQAKLAEQAERYDEMVESMKKVAGMDVELTVEERNLLSVAYKNVIGARRASW...", "input_type": "protein"}
+    ],
+    "num_loops": 20,
+    "num_sampling_steps": 100,
+    "output_format": "mmcif"
+  }'
+```
+
