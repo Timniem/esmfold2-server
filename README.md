@@ -17,7 +17,7 @@ A minimal HTTP service for folding amino acid sequences with ESMFold2 and return
 - PyTorch
 - FastAPI
 - Transformers
-- ESMFold model weights available locally if running with `HF_HUB_OFFLINE=1`
+- ESMFold model weights available locally if running with `HF_HUB_OFFLINE=1` (pip install esm@git+https://github.com/Biohub/esm.git@main)
 
 ## Install (allow online mode once)
 ```
