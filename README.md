@@ -1,10 +1,10 @@
 # esmfold-server
-A minimal HTTP service for folding amino acid sequences with ESMFold2 and returning a PDB file.
+A minimal HTTP service for folding amino acid sequences with ESMFold2 and returning a mmCIF file.
 
 ## Features
 - Loads the ESMFold model once at startup
 - Accepts a protein sequence via HTTP
-- Returns the predicted structure as a `.pdb` file
+- Returns the predicted (complex) structure as a `.mmcif` file
 - Automatically selects the best available device:
   - CUDA
   - Apple Metal
@@ -52,7 +52,7 @@ Rules:
 - Lowercase input is converted to uppercase
 
 ## Response
-Returns the predicted structure as a PDB file with content type `chemical/x-pdb`.
+Returns the predicted structure as a mmcif file with content type `chemical/x-mmcif`.
 
 ## Environment variables
 - ESMFOLD_MODEL: Model name, default: facebook/esmfold_v1
@@ -73,7 +73,6 @@ curl -X POST http://localhost:8000/fold \
   -H "Content-Type: application/json" \
   -d '{
     "sequences": [{"id": "A", "sequence": "MAKTPSDHLLSTLEELVPYDFEKFKFKLQNTSVQKEHSRIPRSQIQRARPVKMATLLVTY", "input_type": "protein"}],
-    "output_format": "pdb"
   }'
 ```
 #### Protein-protein complex
@@ -87,7 +86,6 @@ curl -X POST http://localhost:8000/fold \
     ],
     "num_loops": 20,
     "num_sampling_steps": 100,
-    "output_format": "mmcif"
   }'
 ```
 

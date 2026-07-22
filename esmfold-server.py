@@ -77,9 +77,6 @@ class FoldRequest(BaseModel):
         1, ge=1, description="Number of diffusion samples"
     )
     seed: Optional[int] = Field(0, description="Random seed for reproducibility")
-    output_format: Optional[str] = Field(
-        "pdb", description="Output format: 'pdb' or 'mmcif'"
-    )
 
 def pick_device() -> torch.device:
     if torch.cuda.is_available():
@@ -163,10 +160,8 @@ def infer_structure(
         metrics["plddt_mean"], metrics["ptm"], metrics["iptm"], dt,
     )
 
-    if output_format == "mmcif":
-        output = result.complex.to_mmcif()
-    else:
-        output = result.complex.to_pdb()
+    output = result.complex.to_mmcif()
+
 
     return output, metrics
 
@@ -215,7 +210,7 @@ def fold(req: FoldRequest) -> Response:
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=f"Inference failed: {e}") from e
 
-    content_type = "chemical/x-pdb" if req.output_format == "pdb" else "chemical/x-mmcif"
+    content_type = "chemical/x-mmcif"
     filename = f"prediction.{req.output_format}"
 
     # Add metrics to response headers
